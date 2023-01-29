@@ -3,46 +3,46 @@
 #include <cmath>
 
 
-void RovePIDController::configPID(float kP, float kI, float kD) {
+void RovePIDController::configPID(const float& kP, const float& kI, const float& kD) {
     configKP(kP);
     configKI(kI);
     configKD(kD);
 }
 
-void RovePIDController::configKP(float kP) {
+void RovePIDController::configKP(const float& kP) {
     m_kP = kP;
 }
 
-void RovePIDController::configKI(float kI) {
+void RovePIDController::configKI(const float& kI) {
     m_kI = kI;
 }
 
-void RovePIDController::configKD(float kD) {
+void RovePIDController::configKD(const float& kD) {
     m_kD = kD;
 }
 
 
 
-void RovePIDController::configIZone(float iZone) {
+void RovePIDController::configIZone(const float& iZone) {
     m_iZone = iZone;
 }
 
-void RovePIDController::configMaxIntegralAccum(float max) {
+void RovePIDController::configMaxIntegralAccum(const float& max) {
     m_maxIntegralAccum = max;
 }
 
 
 
-void RovePIDController::configOutputLimits(float max, float min) {
+void RovePIDController::configOutputLimits(const float& max, const float& min) {
     configMaxOutput(max);
     configMinOutput(min);
 }
 
-void RovePIDController::configMaxOutput(float max) {
+void RovePIDController::configMaxOutput(const float& max) {
     m_maxOutput = max;
 }
 
-void RovePIDController::configMinOutput(float min) {
+void RovePIDController::configMinOutput(const float& min) {
     m_minOutput = min;
 }
 
@@ -52,7 +52,7 @@ void RovePIDController::reset() {
     m_firstLoop = true;
 }
 
-float RovePIDController::calculate(float target, float feedback, float timestamp) {
+float RovePIDController::calculate(const float& target, const float& feedback, const float& timestamp) {
     float error = target - feedback;
     float derivative;
 
@@ -70,7 +70,7 @@ float RovePIDController::calculate(float target, float feedback, float timestamp
             m_integral = 0;
         }
         else {
-            m_integral += error;
+            m_integral += error * dt;
             if (m_integral > m_maxIntegralAccum) m_integral = m_maxIntegralAccum;
             else if (m_integral < -m_maxIntegralAccum) m_integral = -m_maxIntegralAccum;
         }
@@ -79,5 +79,9 @@ float RovePIDController::calculate(float target, float feedback, float timestamp
     m_lastTimestamp = timestamp;
     m_lastError = error;
 
-    return m_kP*error + m_kI*m_integral + m_kD*derivative;
+    float output = m_kP*error + m_kI*m_integral + m_kD*derivative;
+    
+    if(output > m_maxOutput) return m_maxOutput;
+    if(output < m_minOutput) return m_minOutput;
+    return output;
 }

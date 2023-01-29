@@ -15,23 +15,108 @@ private:
 
 public:
 
+    /**
+     * @brief Construct a new RovePIDController object.
+     * 
+     */
     RovePIDController() {}
-    RovePIDController(float kP, float kI, float kD) : m_kP(kP), m_kI(kI), m_kD(kD) {}
 
-    void configPID(float kP, float kI, float kD);
-    void configKP(float kP);
-    void configKI(float kI);
-    void configKD(float kD);
+    /**
+     * @brief Construct a new RovePIDController object.
+     * 
+     * @param kP 
+     * @param kI 
+     * @param kD 
+     */
+    RovePIDController(const float& kP, const float& kI, const float& kD) : m_kP(kP), m_kI(kI), m_kD(kD) {}
 
-    void configIZone(float iZone);
-    void configMaxIntegralAccum(float max);
 
-    void configOutputLimits(float max, float min);
-    void configMaxOutput(float max);
-    void configMinOutput(float min);
+    /**
+     * @brief Configure the gains of the PID Controller.
+     * 
+     * @param kP 
+     * @param kI 
+     * @param kD 
+     */
+    void configPID(const float& kP, const float& kI, const float& kD);
 
+    /**
+     * @brief Configure the proportional gain of the PID controller.
+     * 
+     * @param kP 
+     */
+    void configKP(const float& kP);
+
+    /**
+     * @brief Configure the integral gain of the PID controller.
+     * 
+     * @param kI 
+     */
+    void configKI(const float& kI);
+
+    /**
+     * @brief Configure the derivative gain of the PID controller.
+     * 
+     * @param kD 
+     */
+    void configKD(const float& kD);
+
+
+    /**
+     * @brief Configure the integral zone of the PID controller. If the absolute error is greater than this value
+     * when calculate() is called, the integral will be reset to 0.
+     * 
+     * @param iZone [0, FLT_MAX], defaults to FLT_MAX.
+     */
+    void configIZone(const float& iZone);
+
+    /**
+     * @brief Configure the maximum integral accumulation of the PID controller. If the integral is greater than this
+     * value when calculate() is called, it will be set to equal this value.
+     * 
+     * @param max [0, FLT_MAX], defaults to FLT_MAX.
+     */
+    void configMaxIntegralAccum(const float& max);
+
+
+    /**
+     * @brief Configure the maximum and minimum values returned by calculate().
+     * 
+     * @param max 
+     * @param min 
+     */
+    void configOutputLimits(const float& max, const float& min);
+
+    /**
+     * @brief Configure the maximum value returned by calculate().
+     * 
+     * @param max 
+     */
+    void configMaxOutput(const float& max);
+
+    /**
+     * @brief Configure the minimum value returned by calculate().
+     * 
+     * @param min 
+     */
+    void configMinOutput(const float& min);
+
+
+    /**
+     * @brief Reset the PID controller. When calculate() is next called, the derivative and integral terms will be 0.
+     * 
+     */
     void reset();
-    float calculate(float target, float feedback, float timestamp);
+
+    /**
+     * @brief Calculate the output of the PID controller.
+     * 
+     * @param target
+     * @param feedback
+     * @param timestamp 
+     * @return The output of the PID controller, bounded by the configured maximum and minimum values. 
+     */
+    float calculate(const float& target, const float& feedback, const float& timestamp);
 
 };
 
