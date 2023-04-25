@@ -33,9 +33,9 @@ void RovePIDController::configMaxIntegralAccum(const float& max) {
 
 
 
-void RovePIDController::configOutputLimits(const float& max, const float& min) {
-    configMaxOutput(max);
+void RovePIDController::configOutputLimits(const float& min, const float& max) {
     configMinOutput(min);
+    configMaxOutput(max);
 }
 
 void RovePIDController::configMaxOutput(const float& max) {
@@ -48,14 +48,32 @@ void RovePIDController::configMinOutput(const float& min) {
 
 
 
-void RovePIDController::reset() {
+void RovePIDController::enableContinuousFeedback(const float& minFeedback, const float& maxFeedback) {
+    m_minFeedback = minFeedback;
+    m_maxFeedback = maxFeedback;
+    m_continuous = true;
+}
+
+void RovePIDController::disableContinuousFeedback() {
+    m_continuous = false;
+}
+
+
+void RovePIDController::reset() const {
     m_firstLoop = true;
 }
 
-float RovePIDController::calculate(const float& target, const float& feedback, const float& timestamp) {
+float RovePIDController::calculate(const float& target, const float& feedback, const float& timestamp) const {
     float error = target - feedback;
-    float derivative;
+    if (m_continuous) {
+        float modulus = m_maxFeedback - m_minFeedback;
+        error = std::fmod(error, modulus);
 
+        if (error > modulus/2) error -= modulus;
+        else if (error < -modulus/2) error += modulus;
+    }
+
+    float derivative;
     if (m_firstLoop) {
         derivative = 0;
         m_integral = 0;

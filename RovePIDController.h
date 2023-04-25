@@ -10,8 +10,11 @@ private:
     float m_kP = 0, m_kI = 0, m_kD = 0;
     float m_iZone = FLT_MAX, m_maxIntegralAccum = FLT_MAX;
     float m_maxOutput = FLT_MAX, m_minOutput = -FLT_MAX;
-    float m_lastError, m_lastTimestamp, m_integral;
-    bool m_firstLoop = true;
+    mutable float m_lastError, m_lastTimestamp, m_integral;
+    mutable bool m_firstLoop = true;
+
+    bool m_continuous = false;
+    float m_maxFeedback, m_minFeedback;
 
 public:
 
@@ -82,10 +85,10 @@ public:
     /**
      * @brief Configure the maximum and minimum values returned by calculate().
      * 
-     * @param max 
      * @param min 
+     * @param max 
      */
-    void configOutputLimits(const float& max, const float& min);
+    void configOutputLimits(const float& min, const float& max);
 
     /**
      * @brief Configure the maximum value returned by calculate().
@@ -103,10 +106,24 @@ public:
 
 
     /**
+     * @brief Enable wrapping of feedback with the given range. For 360 degree rotation, pass (0, 360).
+     * 
+     * @param minFeedback Smaller representation of wrapping point.
+     * @param maxFeedback Larger representation of wrapping point.
+     */
+    void enableContinuousFeedback(const float& minFeedback, const float& maxFeedback);
+
+    /**
+     * @brief Disable wrapping of feedback; disabled by default.
+     */
+    void disableContinuousFeedback();
+
+
+    /**
      * @brief Reset the PID controller. When calculate() is next called, the derivative and integral terms will be 0.
      * 
      */
-    void reset();
+    void reset() const;
 
     /**
      * @brief Calculate the output of the PID controller.
@@ -116,7 +133,7 @@ public:
      * @param timestamp 
      * @return The output of the PID controller, bounded by the configured maximum and minimum values. 
      */
-    float calculate(const float& target, const float& feedback, const float& timestamp);
+    float calculate(const float& target, const float& feedback, const float& timestamp) const;
 
 };
 
