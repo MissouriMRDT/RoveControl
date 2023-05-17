@@ -58,6 +58,10 @@ void RovePIDController::disableContinuousFeedback() {
     m_continuous = false;
 }
 
+float RovePIDController::error() const {
+    return m_lastError;
+}
+
 
 void RovePIDController::reset() const {
     m_firstLoop = true;

@@ -118,6 +118,13 @@ public:
      */
     void disableContinuousFeedback();
 
+    /**
+     * @brief Read the last error in position.
+     * 
+     * @return Last error.
+     */
+    float error() const;
+
 
     /**
      * @brief Reset the PID controller. When calculate() is next called, the derivative and integral terms will be 0.
