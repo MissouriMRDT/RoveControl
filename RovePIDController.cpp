@@ -1,7 +1,8 @@
 #include "RovePIDController.h"
 
-#include <cmath>
-
+#if defined(ARDUINO)
+#include "Arduino.h"
+#endif
 
 void RovePIDController::configPID(const float& kP, const float& kI, const float& kD) {
     configKP(kP);
@@ -67,34 +68,44 @@ void RovePIDController::reset() const {
     m_firstLoop = true;
 }
 
-float RovePIDController::calculate(const float& target, const float& feedback, const float& timestamp) const {
+float RovePIDController::calculate(const float& target, const float& feedback) const {
+    uint32_t timestamp, dt;
+
+    #if defined(ARDUINO)
+    timestamp = millis();
+    #endif
+
     float error = target - feedback;
     if (m_continuous) {
         float modulus = m_maxFeedback - m_minFeedback;
-        error = std::fmod(error, modulus);
+        error = fmod(error, modulus);
 
         if (error > modulus/2) error -= modulus;
         else if (error < -modulus/2) error += modulus;
     }
 
-    float derivative;
+    float derivative = 0;
     if (m_firstLoop) {
-        derivative = 0;
         m_integral = 0;
         m_firstLoop = false;
     }
     else {
-        float dt = timestamp - m_lastTimestamp;
-        if (dt == 0) derivative = 0;
-        else derivative = (error - m_lastError) / dt;
+        dt = timestamp - m_lastTimestamp;
 
-        if (std::abs(error) > m_iZone) {
+        if (dt != 0) {
+            derivative = (error - m_lastError) / dt;
+        }
+
+        if (abs(error) > m_iZone) {
             m_integral = 0;
         }
         else {
             m_integral += error * dt;
-            if (m_integral > m_maxIntegralAccum) m_integral = m_maxIntegralAccum;
-            else if (m_integral < -m_maxIntegralAccum) m_integral = -m_maxIntegralAccum;
+            if (m_integral > m_maxIntegralAccum) {
+                m_integral = m_maxIntegralAccum;
+            } else if (m_integral < -m_maxIntegralAccum) {
+                m_integral = -m_maxIntegralAccum;
+            }
         }
     }
     

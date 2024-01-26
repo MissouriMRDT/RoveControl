@@ -2,6 +2,7 @@
 #define ROVEPIDCONTROLLER_H
 
 #include <cfloat>
+#include <cstdint>
 
 class RovePIDController {
 
@@ -10,8 +11,9 @@ private:
     float m_kP = 0, m_kI = 0, m_kD = 0;
     float m_iZone = FLT_MAX, m_maxIntegralAccum = FLT_MAX;
     float m_maxOutput = FLT_MAX, m_minOutput = -FLT_MAX;
-    mutable float m_lastError, m_lastTimestamp, m_integral;
+    mutable float m_lastError, m_integral;
     mutable bool m_firstLoop = true;
+    mutable uint32_t m_lastTimestamp;
 
     bool m_continuous = false;
     float m_maxFeedback, m_minFeedback;
@@ -137,10 +139,9 @@ public:
      * 
      * @param target
      * @param feedback
-     * @param timestamp 
      * @return The output of the PID controller, bounded by the configured maximum and minimum values. 
      */
-    float calculate(const float& target, const float& feedback, const float& timestamp) const;
+    float calculate(const float& target, const float& feedback) const;
 
 };
 
