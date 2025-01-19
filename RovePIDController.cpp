@@ -4,52 +4,52 @@
 #include "Arduino.h"
 #endif
 
-void RovePIDController::configPID(const float& kP, const float& kI, const float& kD) {
+void RovePIDController::configPID(const float kP, const float kI, const float kD) {
     configKP(kP);
     configKI(kI);
     configKD(kD);
 }
 
-void RovePIDController::configKP(const float& kP) {
+void RovePIDController::configKP(const float kP) {
     m_kP = kP;
 }
 
-void RovePIDController::configKI(const float& kI) {
+void RovePIDController::configKI(const float kI) {
     m_kI = kI;
 }
 
-void RovePIDController::configKD(const float& kD) {
+void RovePIDController::configKD(const float kD) {
     m_kD = kD;
 }
 
 
 
-void RovePIDController::configIZone(const float& iZone) {
+void RovePIDController::configIZone(const float iZone) {
     m_iZone = iZone;
 }
 
-void RovePIDController::configMaxIntegralAccum(const float& max) {
+void RovePIDController::configMaxIntegralAccum(const float max) {
     m_maxIntegralAccum = max;
 }
 
 
 
-void RovePIDController::configOutputLimits(const float& min, const float& max) {
+void RovePIDController::configOutputLimits(const float min, const float max) {
     configMinOutput(min);
     configMaxOutput(max);
 }
 
-void RovePIDController::configMaxOutput(const float& max) {
+void RovePIDController::configMaxOutput(const float max) {
     m_maxOutput = max;
 }
 
-void RovePIDController::configMinOutput(const float& min) {
+void RovePIDController::configMinOutput(const float min) {
     m_minOutput = min;
 }
 
 
 
-void RovePIDController::enableContinuousFeedback(const float& minFeedback, const float& maxFeedback) {
+void RovePIDController::enableContinuousFeedback(const float minFeedback, const float maxFeedback) {
     m_minFeedback = minFeedback;
     m_maxFeedback = maxFeedback;
     m_continuous = true;
@@ -68,7 +68,7 @@ void RovePIDController::reset() const {
     m_firstLoop = true;
 }
 
-float RovePIDController::calculate(const float& target, const float& feedback) const {
+float RovePIDController::calculate(const float target, const float feedback) const {
     uint32_t timestamp, dt;
 
     #if defined(ARDUINO)
