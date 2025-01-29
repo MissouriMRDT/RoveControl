@@ -47,7 +47,9 @@ void RovePIDController::configMinOutput(const float min) {
     m_minOutput = min;
 }
 
-
+void RovePIDController::configOffset(const float offset) {
+    m_offset = offset;
+}
 
 void RovePIDController::enableContinuousFeedback(const float minFeedback, const float maxFeedback) {
     m_minFeedback = minFeedback;
@@ -68,14 +70,26 @@ void RovePIDController::reset() const {
     m_firstLoop = true;
 }
 
-float RovePIDController::calculate(const float target, const float feedback) const {
+float RovePIDController::calculate(float target, float feedback) const {
     uint32_t timestamp, dt;
 
     #if defined(ARDUINO)
     timestamp = millis();
     #endif
 
+    target -= m_offset;
+    feedback -= m_offset;
+    target = fmod(target, 360.0);
+    feedback = fmod(feedback, 360.0);
+    if (target < 0) target += 360.0;
+    if (feedback < 0) feedback += 360.0;
+
+    Serial.printf(" fb: ");
+    Serial.print(feedback, 2);
+
     float error = target - feedback;
+    //Subtract offset to make seam inside no go zone
+
     if (m_continuous) {
         float modulus = m_maxFeedback - m_minFeedback;
         error = fmod(error, modulus);
@@ -113,6 +127,10 @@ float RovePIDController::calculate(const float target, const float feedback) con
     m_lastError = error;
 
     float output = m_kP*error + m_kI*m_integral + m_kD*derivative;
+
+    Serial.printf(" err: ");
+    Serial.print(error, 2);
+    Serial.printf("    ");
     
     if(output > m_maxOutput) return m_maxOutput;
     if(output < m_minOutput) return m_minOutput;

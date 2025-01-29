@@ -17,6 +17,7 @@ private:
 
     bool m_continuous = false;
     float m_maxFeedback, m_minFeedback;
+    float m_offset;
 
 public:
 
@@ -106,6 +107,8 @@ public:
      */
     void configMinOutput(const float min);
 
+    void configOffset(const float offset);
+
 
     /**
      * @brief Enable wrapping of feedback with the given range. For 360 degree rotation, pass (0, 360).
@@ -141,7 +144,7 @@ public:
      * @param feedback
      * @return The output of the PID controller, bounded by the configured maximum and minimum values. 
      */
-    float calculate(const float target, const float feedback) const;
+    float calculate(float target, float feedback) const;
 
 };
 
