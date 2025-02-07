@@ -1,57 +1,55 @@
 #include "RovePIDController.h"
 
-#if defined(ARDUINO)
 #include "Arduino.h"
-#endif
 
-void RovePIDController::configPID(const float kP, const float kI, const float kD) {
+void RovePIDController::configPID(float kP, float kI, float kD) {
     configKP(kP);
     configKI(kI);
     configKD(kD);
 }
 
-void RovePIDController::configKP(const float kP) {
+void RovePIDController::configKP(float kP) {
     m_kP = kP;
 }
 
-void RovePIDController::configKI(const float kI) {
+void RovePIDController::configKI(float kI) {
     m_kI = kI;
 }
 
-void RovePIDController::configKD(const float kD) {
+void RovePIDController::configKD(float kD) {
     m_kD = kD;
 }
 
 
 
-void RovePIDController::configIZone(const float iZone) {
+void RovePIDController::configIZone(float iZone) {
     m_iZone = iZone;
 }
 
-void RovePIDController::configMaxIntegralAccum(const float max) {
+void RovePIDController::configMaxIntegralAccum(float max) {
     m_maxIntegralAccum = max;
 }
 
 
 
-void RovePIDController::configOutputLimits(const float min, const float max) {
+void RovePIDController::configOutputLimits(float min, float max) {
     configMinOutput(min);
     configMaxOutput(max);
 }
 
-void RovePIDController::configMaxOutput(const float max) {
+void RovePIDController::configMaxOutput(float max) {
     m_maxOutput = max;
 }
 
-void RovePIDController::configMinOutput(const float min) {
+void RovePIDController::configMinOutput(float min) {
     m_minOutput = min;
 }
 
-void RovePIDController::configOffset(const float offset) {
+void RovePIDController::configOffset(float offset) {
     m_offset = offset;
 }
 
-void RovePIDController::enableContinuousFeedback(const float minFeedback, const float maxFeedback) {
+void RovePIDController::enableContinuousFeedback(float minFeedback, float maxFeedback) {
     m_minFeedback = minFeedback;
     m_maxFeedback = maxFeedback;
     m_continuous = true;
@@ -73,9 +71,7 @@ void RovePIDController::reset() const {
 float RovePIDController::calculate(float target, float feedback) const {
     uint32_t timestamp, dt;
 
-    #if defined(ARDUINO)
     timestamp = millis();
-    #endif
 
     target -= m_offset;
     feedback -= m_offset;
@@ -83,9 +79,6 @@ float RovePIDController::calculate(float target, float feedback) const {
     feedback = fmod(feedback, 360.0);
     if (target < 0) target += 360.0;
     if (feedback < 0) feedback += 360.0;
-
-    Serial.printf(" fb: ");
-    Serial.print(feedback, 2);
 
     float error = target - feedback;
     //Subtract offset to make seam inside no go zone
@@ -127,10 +120,6 @@ float RovePIDController::calculate(float target, float feedback) const {
     m_lastError = error;
 
     float output = m_kP*error + m_kI*m_integral + m_kD*derivative;
-
-    Serial.printf(" err: ");
-    Serial.print(error, 2);
-    Serial.printf("    ");
     
     if(output > m_maxOutput) return m_maxOutput;
     if(output < m_minOutput) return m_minOutput;

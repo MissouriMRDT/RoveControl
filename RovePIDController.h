@@ -34,7 +34,7 @@ public:
      * @param kI 
      * @param kD 
      */
-    RovePIDController(const float kP, const float kI, const float kD) : m_kP(kP), m_kI(kI), m_kD(kD) {}
+    RovePIDController(float kP, float kI, float kD) : m_kP(kP), m_kI(kI), m_kD(kD) {}
 
 
     /**
@@ -44,28 +44,28 @@ public:
      * @param kI 
      * @param kD 
      */
-    void configPID(const float kP, const float kI, const float kD);
+    void configPID(float kP, float kI, float kD);
 
     /**
      * @brief Configure the proportional gain of the PID controller.
      * 
      * @param kP 
      */
-    void configKP(const float kP);
+    void configKP(float kP);
 
     /**
      * @brief Configure the integral gain of the PID controller.
      * 
      * @param kI 
      */
-    void configKI(const float kI);
+    void configKI(float kI);
 
     /**
      * @brief Configure the derivative gain of the PID controller.
      * 
      * @param kD 
      */
-    void configKD(const float kD);
+    void configKD(float kD);
 
 
     /**
@@ -74,7 +74,7 @@ public:
      * 
      * @param iZone [0, FLT_MAX], defaults to FLT_MAX.
      */
-    void configIZone(const float iZone);
+    void configIZone(float iZone);
 
     /**
      * @brief Configure the maximum integral accumulation of the PID controller. If the integral is greater than this
@@ -82,7 +82,7 @@ public:
      * 
      * @param max [0, FLT_MAX], defaults to FLT_MAX.
      */
-    void configMaxIntegralAccum(const float max);
+    void configMaxIntegralAccum(float max);
 
 
     /**
@@ -91,24 +91,28 @@ public:
      * @param min 
      * @param max 
      */
-    void configOutputLimits(const float min, const float max);
+    void configOutputLimits(float min, float max);
 
     /**
      * @brief Configure the maximum value returned by calculate().
      * 
      * @param max 
      */
-    void configMaxOutput(const float max);
+    void configMaxOutput(float max);
 
     /**
      * @brief Configure the minimum value returned by calculate().
      * 
      * @param min 
      */
-    void configMinOutput(const float min);
+    void configMinOutput(float min);
 
-    void configOffset(const float offset);
-
+    /**
+     * @brief Configure an offset that is applied to the target and feedback values before calculating.
+     * 
+     * @param offset
+     */
+    void configOffset(float offset);
 
     /**
      * @brief Enable wrapping of feedback with the given range. For 360 degree rotation, pass (0, 360).
@@ -116,7 +120,7 @@ public:
      * @param minFeedback Smaller representation of wrapping point.
      * @param maxFeedback Larger representation of wrapping point.
      */
-    void enableContinuousFeedback(const float minFeedback, const float maxFeedback);
+    void enableContinuousFeedback(float minFeedback, float maxFeedback);
 
     /**
      * @brief Disable wrapping of feedback; disabled by default.
