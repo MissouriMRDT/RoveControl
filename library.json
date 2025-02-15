@@ -1,0 +1,14 @@
+{
+  "name": "RoveControl",
+  "author": "MissouriMRDT",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MissouriMRDT/RoveControl.git"
+  },
+  "description": "Embedded software libraries for closed loop control, developed for use with Arduino.",
+  "keywords": [ "rovecontrol", "rovepid", "mrdt" ],
+  "frameworks": [ "arduino" ],
+  "platforms": [ "titiva", "teensy" ],
+  "examples": []
+}
